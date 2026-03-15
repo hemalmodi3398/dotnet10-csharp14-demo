@@ -1,0 +1,6 @@
+@Csharp14AnddotNetCoreGoal_HostAddress = http://localhost:5062
+
+GET {{Csharp14AnddotNetCoreGoal_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
