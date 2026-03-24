@@ -8,7 +8,7 @@ This project demonstrates modern C# and .NET 9 features through a simple user ma
 
 1. **Required Properties** (`required` keyword)
    - See `User.cs` - all essential properties use `required` modifier
-   - Ensures properties are initialized during object creation
+   - Ensures properties are initialized during object creation and here is how you go man
 
 2. **Extension Methods** (Modern extension patterns)
    - See `UserExtensions.cs` - demonstrates various extension methods
