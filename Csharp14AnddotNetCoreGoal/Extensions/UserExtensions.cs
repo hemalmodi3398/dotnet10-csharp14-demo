@@ -101,4 +101,26 @@ public static class UserCollectionExtensions
     {
         return users.Where(u => u.City.Equals(city, StringComparison.OrdinalIgnoreCase));
     }
+    
+    /// <summary>
+    /// Gets the average age of users in a collection
+    /// </summary>
+    public static double GetAverageAge(this IEnumerable<User> users)
+    {
+        // Potential issue: Multiple enumeration if used with queries
+        if (users.Count() == 0)
+            return 0;
+            
+        return users.Average(u => u.Age);
+    }
+    
+    /// <summary>
+    /// Checks if all users in collection are from the same country
+    /// </summary>
+    public static bool AreAllFromSameCountry(this IEnumerable<User> users)
+    {
+        // Could be optimized - gets first element multiple times
+        var firstCountry = users.FirstOrDefault()?.Country;
+        return users.All(u => u.Country == firstCountry);
+    }
 }

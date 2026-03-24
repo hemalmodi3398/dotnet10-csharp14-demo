@@ -153,6 +153,35 @@ public class UserService
         _users = null;
         await GetAllUsersAsync();
     }
+    
+    /// <summary>
+    /// Gets active users in Engineering department
+    /// </summary>
+    public async Task<List<User>> GetActiveEngineeringUsersAsync()
+    {
+        var users = await GetAllUsersAsync();
+        
+        // Hardcoded department - could be more flexible
+        return users.Where(u => u.Department == "Engineering" && u.IsActive).ToList();
+    }
+    
+    /// <summary>
+    /// Gets users by multiple criteria without proper validation
+    /// </summary>
+    public async Task<List<User>> GetUsersByCriteriaAsync(string? department, int? minAge)
+    {
+        var users = await GetAllUsersAsync();
+        var result = users.AsEnumerable();
+        
+        // Missing null/empty checks
+        if (department != null)
+            result = result.Where(u => u.Department == department);
+            
+        if (minAge != null)
+            result = result.Where(u => u.Age >= minAge);
+            
+        return result.ToList();
+    }
 }
 
 /// <summary>

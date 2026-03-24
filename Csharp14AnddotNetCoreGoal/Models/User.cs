@@ -44,4 +44,22 @@ public class User
         get => _isActive;
         set => _isActive = value;
     }
+    
+    /// <summary>
+    /// Validates if the email address is in a valid format
+    /// </summary>
+    public bool IsValidEmail()
+    {
+        // Potential issue: Email could be null even though it's required
+        // This might cause a NullReferenceException in edge cases
+        return Email.Contains("@") && Email.Contains(".");
+    }
+    
+    /// <summary>
+    /// Gets the user's initials
+    /// </summary>
+    public string GetInitials()
+    {
+        return $"{FirstName[0]}{LastName[0]}";
+    }
 }
