@@ -11,7 +11,12 @@ public class User
     
     public required string LastName { get; set; }
     
-    public required string Email { get; set; }
+    // Demonstrates field keyword in an auto-property accessor.
+    public required string Email
+    {
+        get;
+        set => field = value.Trim().ToLowerInvariant();
+    }
     
     public string? PhoneNumber { get; set; }
     
@@ -25,8 +30,7 @@ public class User
     
     public int Age { get; set; }
     
-    // Demonstrating field keyword in auto-property (C# 14 feature)
-    // The field keyword allows direct access to the backing field
+    // Caches computed full name to keep reads fast and simple.
     private string? _fullNameCache;
     public string FullName
     {
@@ -37,7 +41,6 @@ public class User
         }
     }
     
-    // Another example using field keyword concept
     private bool _isActive = true;
     public bool IsActive
     {

@@ -13,15 +13,15 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
-        Title = "User Management API - C# 14 & .NET 9 Demo",
+        Title = "User Management API - C# 14 & .NET 10 Demo",
         Version = "v1",
-        Description = "A simple user management API demonstrating modern C# and .NET 9 features including:\n\n" +
-                      "• Extension methods\n" +
-                      "• Null-conditional assignment\n" +
-                      "• Pattern matching\n" +
-                      "• Record types\n" +
-                      "• Minimal APIs\n" +
-                      "• Required properties",
+        Description = "A simple user management API demonstrating modern C# 14 and .NET 10 features including:\n\n" +
+                      "- Extension members (extension blocks)\n" +
+                      "- Null-conditional assignment\n" +
+                      "- Pattern matching\n" +
+                      "- Record types\n" +
+                      "- Minimal APIs\n" +
+                      "- Required properties",
         Contact = new Microsoft.OpenApi.Models.OpenApiContact
         {
             Name = "User Management API",
@@ -49,7 +49,7 @@ app.UseHttpsRedirection();
 
 // ========================================
 // Minimal API Endpoints for User Management
-// Demonstrating .NET 9 Minimal APIs
+// Demonstrating .NET 10 Minimal APIs
 // ========================================
 
 // GET /api/users - Get all users
@@ -169,8 +169,8 @@ app.MapGet("/api/users/{id:int}/summary", async (int id, UserService userService
     return Results.Ok(new 
     {
         Id = user.Id,
-        DisplayName = user.GetDisplayName(),
-        Summary = user.GetSummary(),
+        DisplayName = user.DisplayName,
+        Summary = user.Summary,
         MaskedEmail = user.GetMaskedEmail(),
         IsSenior = user.IsSenior()
     });

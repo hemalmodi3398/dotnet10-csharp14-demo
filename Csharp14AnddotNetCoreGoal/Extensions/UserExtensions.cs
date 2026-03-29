@@ -8,68 +8,61 @@ using Csharp14AnddotNetCoreGoal.Models;
 /// </summary>
 public static class UserExtensions
 {
-    /// <summary>
-    /// Gets the display name with title
-    /// </summary>
-    public static string GetDisplayName(this User user)
+    extension(User user)
     {
-        return $"{user.JobTitle} - {user.FullName}";
-    }
-    
-    /// <summary>
-    /// Checks if user is in a specific department
-    /// </summary>
-    public static bool IsInDepartment(this User user, string department)
-    {
-        return user.Department.Equals(department, StringComparison.OrdinalIgnoreCase);
-    }
-    
-    /// <summary>
-    /// Checks if user matches search criteria
-    /// </summary>
-    public static bool MatchesSearch(this User user, string searchTerm)
-    {
-        if (string.IsNullOrWhiteSpace(searchTerm))
-            return true;
-            
-        var term = searchTerm.ToLowerInvariant();
-        
-        return user.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-               user.LastName.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-               user.Email.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-               user.City.Contains(term, StringComparison.OrdinalIgnoreCase) ||
-               user.Department.Contains(term, StringComparison.OrdinalIgnoreCase);
-    }
-    
-    /// <summary>
-    /// Checks if user is a senior employee (age-based)
-    /// </summary>
-    public static bool IsSenior(this User user) => user.Age >= 40;
-    
-    /// <summary>
-    /// Gets a summary of the user
-    /// </summary>
-    public static string GetSummary(this User user)
-    {
-        return $"{user.FullName} ({user.Age} years old) - {user.JobTitle} in {user.Department}, based in {user.City}, {user.Country}";
-    }
-    
-    /// <summary>
-    /// Masks the email for privacy
-    /// </summary>
-    public static string GetMaskedEmail(this User user)
-    {
-        var parts = user.Email.Split('@');
-        if (parts.Length != 2) return user.Email;
-        
-        var localPart = parts[0];
-        var domain = parts[1];
-        
-        var masked = localPart.Length > 2 
-            ? $"{localPart[0]}***{localPart[^1]}@{domain}"
-            : $"***@{domain}";
-            
-        return masked;
+        /// <summary>
+        /// Gets the display name with title as an extension property.
+        /// </summary>
+        public string DisplayName => $"{user.JobTitle} - {user.FullName}";
+
+        /// <summary>
+        /// Gets the user summary as an extension property.
+        /// </summary>
+        public string Summary => $"{user.FullName} ({user.Age} years old) - {user.JobTitle} in {user.Department}, based in {user.City}, {user.Country}";
+
+        /// <summary>
+        /// Checks if user is in a specific department.
+        /// </summary>
+        public bool IsInDepartment(string department) =>
+            user.Department.Equals(department, StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Checks if user matches search criteria.
+        /// </summary>
+        public bool MatchesSearch(string searchTerm)
+        {
+            if (string.IsNullOrWhiteSpace(searchTerm))
+                return true;
+
+            var term = searchTerm.ToLowerInvariant();
+
+            return user.FirstName.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                   user.LastName.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                   user.Email.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                   user.City.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                   user.Department.Contains(term, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Checks if user is a senior employee (age-based).
+        /// </summary>
+        public bool IsSenior() => user.Age >= 40;
+
+        /// <summary>
+        /// Masks the email for privacy.
+        /// </summary>
+        public string GetMaskedEmail()
+        {
+            var parts = user.Email.Split('@');
+            if (parts.Length != 2) return user.Email;
+
+            var localPart = parts[0];
+            var domain = parts[1];
+
+            return localPart.Length > 2
+                ? $"{localPart[0]}***{localPart[^1]}@{domain}"
+                : $"***@{domain}";
+        }
     }
 }
 
@@ -78,27 +71,24 @@ public static class UserExtensions
 /// </summary>
 public static class UserCollectionExtensions
 {
-    /// <summary>
-    /// Filters users by department
-    /// </summary>
-    public static IEnumerable<User> FromDepartment(this IEnumerable<User> users, string department)
+    extension(IEnumerable<User> users)
     {
-        return users.Where(u => u.IsInDepartment(department));
-    }
-    
-    /// <summary>
-    /// Filters users by age range
-    /// </summary>
-    public static IEnumerable<User> InAgeRange(this IEnumerable<User> users, int minAge, int maxAge)
-    {
-        return users.Where(u => u.Age >= minAge && u.Age <= maxAge);
-    }
-    
-    /// <summary>
-    /// Gets users by city
-    /// </summary>
-    public static IEnumerable<User> FromCity(this IEnumerable<User> users, string city)
-    {
-        return users.Where(u => u.City.Equals(city, StringComparison.OrdinalIgnoreCase));
+        /// <summary>
+        /// Filters users by department.
+        /// </summary>
+        public IEnumerable<User> FromDepartment(string department) =>
+            users.Where(u => u.IsInDepartment(department));
+
+        /// <summary>
+        /// Filters users by age range.
+        /// </summary>
+        public IEnumerable<User> InAgeRange(int minAge, int maxAge) =>
+            users.Where(u => u.Age >= minAge && u.Age <= maxAge);
+
+        /// <summary>
+        /// Gets users by city.
+        /// </summary>
+        public IEnumerable<User> FromCity(string city) =>
+            users.Where(u => u.City.Equals(city, StringComparison.OrdinalIgnoreCase));
     }
 }
