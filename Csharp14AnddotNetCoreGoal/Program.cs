@@ -1,5 +1,6 @@
 using Csharp14AnddotNetCoreGoal.Extensions;
 using Csharp14AnddotNetCoreGoal.Services;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "User Management API - C# 14 & .NET 10 Demo",
         Version = "v1",
@@ -22,7 +23,7 @@ builder.Services.AddSwaggerGen(options =>
                       "- Record types\n" +
                       "- Minimal APIs\n" +
                       "- Required properties",
-        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        Contact = new OpenApiContact
         {
             Name = "User Management API",
         }
