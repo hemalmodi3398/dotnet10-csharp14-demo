@@ -60,6 +60,12 @@ public class User
     /// </summary>
     public string GetInitials()
     {
-        return $"{FirstName[0]}{LastName[0]}";
+        var firstName = FirstName?.Trim();
+        var lastName = LastName?.Trim();
+
+        var firstInitial = string.IsNullOrEmpty(firstName) ? string.Empty : firstName[0].ToString();
+        var lastInitial = string.IsNullOrEmpty(lastName) ? string.Empty : lastName[0].ToString();
+
+        return $"{firstInitial}{lastInitial}";
     }
 }
