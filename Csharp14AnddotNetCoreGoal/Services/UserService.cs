@@ -8,7 +8,7 @@ using Csharp14AnddotNetCoreGoal.Models;
 /// Service for managing user data from JSON file
 /// Demonstrates modern C# patterns including null-conditional assignment
 /// </summary>
-public class UserService
+public class UserService : IDisposable
 {
     private List<User>? _users;
     private readonly string _jsonFilePath;
@@ -71,7 +71,15 @@ public class UserService
             };
 
             users.Add(user);
-            await SaveUsersToFileAsync(users);
+            try
+            {
+                await SaveUsersToFileAsync(users);
+            }
+            catch
+            {
+                users.Remove(user);
+                throw;
+            }
 
             return user;
         }
@@ -186,13 +194,21 @@ public class UserService
 
     private async Task SaveUsersToFileAsync(List<User> users)
     {
-        var options = new JsonSerializerOptions
+        try
         {
-            WriteIndented = true
-        };
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
 
-        var jsonContent = JsonSerializer.Serialize(users, options);
-        await File.WriteAllTextAsync(_jsonFilePath, jsonContent);
+            var jsonContent = JsonSerializer.Serialize(users, options);
+            await File.WriteAllTextAsync(_jsonFilePath, jsonContent);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving users to file");
+            throw;
+        }
     }
 
     /// <summary>
@@ -202,6 +218,11 @@ public class UserService
     {
         _users = null;
         await GetAllUsersAsync();
+    }
+
+    public void Dispose()
+    {
+        _createUserLock.Dispose();
     }
 }
 
