@@ -13,6 +13,7 @@ public class UserService
     private List<User>? _users;
     private readonly string _jsonFilePath;
     private readonly ILogger<UserService> _logger;
+    private readonly SemaphoreSlim _createUserLock = new(1, 1);
 
     public UserService(ILogger<UserService> logger, IWebHostEnvironment env)
     {
@@ -47,29 +48,37 @@ public class UserService
     /// </summary>
     public async Task<User> CreateUserAsync(CreateUserRequest request)
     {
-        var users = await GetAllUsersAsync();
-        var nextId = users.Count == 0 ? 1 : users.Max(u => u.Id) + 1;
-
-        var user = new User
+        await _createUserLock.WaitAsync();
+        try
         {
-            Id = nextId,
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            Email = request.Email,
-            PhoneNumber = request.PhoneNumber,
-            City = request.City,
-            Country = request.Country,
-            Department = request.Department,
-            JobTitle = request.JobTitle,
-            Age = request.Age,
-            Birthdate = request.Birthdate,
-            IsActive = true
-        };
+            var users = await GetAllUsersAsync();
+            var nextId = users.Count == 0 ? 1 : users.Max(u => u.Id) + 1;
 
-        users.Add(user);
-        await SaveUsersToFileAsync(users);
+            var user = new User
+            {
+                Id = nextId,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber,
+                City = request.City,
+                Country = request.Country,
+                Department = request.Department,
+                JobTitle = request.JobTitle,
+                Age = request.Age,
+                Birthdate = request.Birthdate,
+                IsActive = true
+            };
 
-        return user;
+            users.Add(user);
+            await SaveUsersToFileAsync(users);
+
+            return user;
+        }
+        finally
+        {
+            _createUserLock.Release();
+        }
     }
 
     /// <summary>
