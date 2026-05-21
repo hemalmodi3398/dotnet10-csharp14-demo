@@ -82,9 +82,6 @@ app.MapGet("/api/users/{id:int}", async (int id, UserService userService) =>
 .Produces(404);
 
 // POST /api/users - Create a user
-const int MinAllowedAge = 0;
-const int MaxAllowedAge = 150;
-
 app.MapPost("/api/users", async (CreateUserRequest request, UserService userService) =>
 {
     var validationErrors = new Dictionary<string, string[]>();
@@ -103,8 +100,8 @@ app.MapPost("/api/users", async (CreateUserRequest request, UserService userServ
         validationErrors["department"] = ["Department is required."];
     if (string.IsNullOrWhiteSpace(request.JobTitle))
         validationErrors["jobTitle"] = ["Job title is required."];
-    if (request.Age < MinAllowedAge || request.Age > MaxAllowedAge)
-        validationErrors["age"] = [$"Age must be between {MinAllowedAge} and {MaxAllowedAge}."];
+    if (request.Age < CreateUserRequest.MinAllowedAge || request.Age > CreateUserRequest.MaxAllowedAge)
+        validationErrors["age"] = [$"Age must be between {CreateUserRequest.MinAllowedAge} and {CreateUserRequest.MaxAllowedAge}."];
     if (request.Birthdate is not null && request.Birthdate > DateOnly.FromDateTime(DateTime.UtcNow))
         validationErrors["birthdate"] = ["Birthdate cannot be in the future."];
 

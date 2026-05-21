@@ -13,12 +13,13 @@ public class UserService : IDisposable
     private List<User>? _users;
     private readonly string _jsonFilePath;
     private readonly ILogger<UserService> _logger;
-    private readonly SemaphoreSlim _createUserLock = new(1, 1);
+    private readonly SemaphoreSlim _createUserLock;
 
     public UserService(ILogger<UserService> logger, IWebHostEnvironment env)
     {
         _logger = logger;
         _jsonFilePath = Path.Combine(env.ContentRootPath, "Data", "users.json");
+        _createUserLock = new SemaphoreSlim(1, 1);
     }
 
     /// <summary>

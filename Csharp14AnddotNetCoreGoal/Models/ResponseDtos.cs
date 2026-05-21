@@ -51,6 +51,9 @@ public record SuccessResponse(string Message);
 /// </summary>
 public record CreateUserRequest
 {
+    public const int MinAllowedAge = 0;
+    public const int MaxAllowedAge = 150;
+
     public required string FirstName { get; init; }
     public required string LastName { get; init; }
     public required string Email { get; init; }
