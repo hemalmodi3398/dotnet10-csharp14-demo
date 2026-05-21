@@ -45,3 +45,20 @@ public record ErrorResponse(string Message, int StatusCode);
 /// Success response
 /// </summary>
 public record SuccessResponse(string Message);
+
+/// <summary>
+/// Create user request body
+/// </summary>
+public record CreateUserRequest
+{
+    public required string FirstName { get; init; }
+    public required string LastName { get; init; }
+    public required string Email { get; init; }
+    public string? PhoneNumber { get; init; }
+    public required string City { get; init; }
+    public required string Country { get; init; }
+    public required string Department { get; init; }
+    public required string JobTitle { get; init; }
+    public int Age { get; init; }
+    public DateOnly? Birthdate { get; init; }
+}

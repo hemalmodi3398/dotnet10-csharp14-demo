@@ -43,6 +43,36 @@ public class UserService
     }
 
     /// <summary>
+    /// Creates a new user and persists it to the JSON file.
+    /// </summary>
+    public async Task<User> CreateUserAsync(CreateUserRequest request)
+    {
+        var users = await GetAllUsersAsync();
+        var nextId = users.Count == 0 ? 1 : users.Max(u => u.Id) + 1;
+
+        var user = new User
+        {
+            Id = nextId,
+            FirstName = request.FirstName,
+            LastName = request.LastName,
+            Email = request.Email,
+            PhoneNumber = request.PhoneNumber,
+            City = request.City,
+            Country = request.Country,
+            Department = request.Department,
+            JobTitle = request.JobTitle,
+            Age = request.Age,
+            Birthdate = request.Birthdate,
+            IsActive = true
+        };
+
+        users.Add(user);
+        await SaveUsersToFileAsync(users);
+
+        return user;
+    }
+
+    /// <summary>
     /// Searches users by a search term
     /// </summary>
     public async Task<List<User>> SearchUsersAsync(string searchTerm)
@@ -143,6 +173,17 @@ public class UserService
             _logger.LogError(ex, "Error loading users from file");
             throw;
         }
+    }
+
+    private async Task SaveUsersToFileAsync(List<User> users)
+    {
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true
+        };
+
+        var jsonContent = JsonSerializer.Serialize(users, options);
+        await File.WriteAllTextAsync(_jsonFilePath, jsonContent);
     }
 
     /// <summary>
