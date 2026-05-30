@@ -1,8 +1,19 @@
 Write-Host "Scanning Minimal API endpoints..."
 
-Get-ChildItem -Recurse -Filter "Program.cs" |
-ForEach-Object {
-    Write-Host "Found endpoint definitions in: $($_.FullName)"
+$repoRoot = Resolve-Path (Join-Path $PSScriptRoot "../../..")
+
+$programFiles = Get-ChildItem -Path $repoRoot -Recurse -Filter "Program.cs"
+
+if ($programFiles.Count -eq 0)
+{
+    Write-Warning "No Program.cs files were found."
+    return
 }
 
-Write-Host "API documentation generation completed."
+foreach ($file in $programFiles)
+{
+    Write-Host "Found endpoint definitions in: $($file.FullName)"
+}
+
+Write-Host "Endpoint discovery completed."
+Write-Host "Documentation generation is not yet implemented."
