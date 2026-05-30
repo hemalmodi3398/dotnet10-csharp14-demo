@@ -16,4 +16,4 @@ foreach ($file in $programFiles)
 }
 
 Write-Host "Endpoint discovery completed."
-Write-Host "Documentation generation is not yet implemented."
+throw "Documentation generation is not yet implemented."
