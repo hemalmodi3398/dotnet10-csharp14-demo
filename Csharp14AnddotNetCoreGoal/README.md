@@ -101,15 +101,89 @@ Csharp14AnddotNetCoreGoal/
 - `GET /api/users/{id}/summary` - Uses extension members
 - `POST /api/users/reload` - Reload data from file
 
-## Quick Run Commands
+## API Setup Steps
 
-```bash
-dotnet restore
-dotnet build
-dotnet run
+1. Install prerequisites:
+   - .NET 10 SDK
+2. Restore dependencies:
+   ```bash
+   dotnet restore Csharp14AnddotNetCoreGoal.sln
+   ```
+3. Build the solution:
+   ```bash
+   dotnet build Csharp14AnddotNetCoreGoal.sln
+   ```
+4. Run the API:
+   ```bash
+   dotnet run --project Csharp14AnddotNetCoreGoal/Csharp14AnddotNetCoreGoal.csproj
+   ```
+
+## Environment Variable Configuration
+
+By default, the `launchSettings.json` profile runs with:
+
+- `ASPNETCORE_ENVIRONMENT=Development`
+
+Optional variables you can set in your terminal before running:
+
+- `ASPNETCORE_URLS` - Override the local URL bindings (for example `http://localhost:5142`)
+
+PowerShell:
+
+```powershell
+$env:ASPNETCORE_ENVIRONMENT="Development"
+$env:ASPNETCORE_URLS="http://localhost:5142"
 ```
 
-Then open Swagger UI at your local app URL (usually root path in Development).
+Bash:
+
+```bash
+export ASPNETCORE_ENVIRONMENT=Development
+export ASPNETCORE_URLS=http://localhost:5142
+```
+
+## Example Request/Response
+
+Request:
+
+```bash
+curl http://localhost:5142/api/users/1
+```
+
+Response:
+
+```json
+{
+  "id": 1,
+  "firstName": "John",
+  "lastName": "Smith",
+  "email": "john.smith@company.com",
+  "phoneNumber": "+1-555-0101",
+  "city": "New York",
+  "country": "USA",
+  "department": "Engineering",
+  "jobTitle": "Senior Software Engineer",
+  "age": 35,
+  "fullName": "John Smith",
+  "isActive": true
+}
+```
+
+## Local Development Instructions
+
+1. Start the API:
+   ```bash
+   dotnet run --project Csharp14AnddotNetCoreGoal/Csharp14AnddotNetCoreGoal.csproj
+   ```
+2. Open Swagger UI:
+   - `https://localhost:7079/` or `http://localhost:5142/`
+3. For fast iteration, use hot reload:
+   ```bash
+   dotnet watch --project Csharp14AnddotNetCoreGoal/Csharp14AnddotNetCoreGoal.csproj run
+   ```
+4. Try requests from:
+   - Swagger UI
+   - `Csharp14AnddotNetCoreGoal/Csharp14AnddotNetCoreGoal.http`
 
 ## Tech Settings Used
 
