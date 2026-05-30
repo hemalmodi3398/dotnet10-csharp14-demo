@@ -1,5 +1,5 @@
 ---
-name: Docs Writer
+name: docs-writer
 description: Specialized agent for writing and improving project documentation, API docs, and README content.
 ---
 
