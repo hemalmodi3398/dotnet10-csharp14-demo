@@ -93,6 +93,7 @@ Csharp14AnddotNetCoreGoal/
 
 - `GET /api/users` - Get all users
 - `GET /api/users/{id}` - Get user by id
+- `POST /api/users` - Create user (supports optional `birthdate`)
 - `GET /api/users/search?term={term}` - Search by name/email/city/department
 - `GET /api/users/department/{department}` - Filter by department
 - `GET /api/users/city/{city}` - Filter by city

@@ -1,4 +1,5 @@
 using Csharp14AnddotNetCoreGoal.Extensions;
+using Csharp14AnddotNetCoreGoal.Models;
 using Csharp14AnddotNetCoreGoal.Services;
 using Microsoft.OpenApi;
 
@@ -79,6 +80,42 @@ app.MapGet("/api/users/{id:int}", async (int id, UserService userService) =>
 .WithTags("Users")
 .Produces<Csharp14AnddotNetCoreGoal.Models.User>(200)
 .Produces(404);
+
+// POST /api/users - Create a user
+app.MapPost("/api/users", async (CreateUserRequest request, UserService userService) =>
+{
+    var validationErrors = new Dictionary<string, string[]>();
+
+    if (string.IsNullOrWhiteSpace(request.FirstName))
+        validationErrors["firstName"] = ["First name is required."];
+    if (string.IsNullOrWhiteSpace(request.LastName))
+        validationErrors["lastName"] = ["Last name is required."];
+    if (string.IsNullOrWhiteSpace(request.Email))
+        validationErrors["email"] = ["Email is required."];
+    if (string.IsNullOrWhiteSpace(request.City))
+        validationErrors["city"] = ["City is required."];
+    if (string.IsNullOrWhiteSpace(request.Country))
+        validationErrors["country"] = ["Country is required."];
+    if (string.IsNullOrWhiteSpace(request.Department))
+        validationErrors["department"] = ["Department is required."];
+    if (string.IsNullOrWhiteSpace(request.JobTitle))
+        validationErrors["jobTitle"] = ["Job title is required."];
+    if (request.Age < CreateUserRequest.MinAllowedAge || request.Age > CreateUserRequest.MaxAllowedAge)
+        validationErrors["age"] = [$"Age must be between {CreateUserRequest.MinAllowedAge} and {CreateUserRequest.MaxAllowedAge}."];
+    if (request.Birthdate is not null && request.Birthdate > DateOnly.FromDateTime(DateTime.UtcNow))
+        validationErrors["birthdate"] = ["Birthdate cannot be in the future."];
+
+    if (validationErrors.Count > 0)
+        return Results.ValidationProblem(validationErrors);
+
+    var createdUser = await userService.CreateUserAsync(request);
+    return Results.Created($"/api/users/{createdUser.Id}", createdUser);
+})
+.WithName("CreateUser")
+.WithDescription("Creates a new user and persists it to the JSON file")
+.WithTags("Users")
+.Produces<User>(201)
+.ProducesValidationProblem(400);
 
 // GET /api/users/search?term={searchTerm} - Search users
 app.MapGet("/api/users/search", async (string? term, UserService userService) =>

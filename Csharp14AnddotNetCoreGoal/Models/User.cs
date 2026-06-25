@@ -29,6 +29,8 @@ public class User
     public required string JobTitle { get; set; }
     
     public int Age { get; set; }
+
+    public DateOnly? Birthdate { get; set; }
     
     // Caches computed full name to keep reads fast and simple.
     private string? _fullNameCache;

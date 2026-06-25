@@ -8,16 +8,18 @@ using Csharp14AnddotNetCoreGoal.Models;
 /// Service for managing user data from JSON file
 /// Demonstrates modern C# patterns including null-conditional assignment
 /// </summary>
-public class UserService
+public class UserService : IDisposable
 {
     private List<User>? _users;
     private readonly string _jsonFilePath;
     private readonly ILogger<UserService> _logger;
+    private readonly SemaphoreSlim _createUserLock;
 
     public UserService(ILogger<UserService> logger, IWebHostEnvironment env)
     {
         _logger = logger;
         _jsonFilePath = Path.Combine(env.ContentRootPath, "Data", "users.json");
+        _createUserLock = new SemaphoreSlim(1, 1);
     }
 
     /// <summary>
@@ -40,6 +42,52 @@ public class UserService
     {
         var users = await GetAllUsersAsync();
         return users.FirstOrDefault(u => u.Id == id);
+    }
+
+    /// <summary>
+    /// Creates a new user and persists it to the JSON file.
+    /// </summary>
+    public async Task<User> CreateUserAsync(CreateUserRequest request)
+    {
+        await _createUserLock.WaitAsync();
+        try
+        {
+            var users = await GetAllUsersAsync();
+            var nextId = users.Count == 0 ? 1 : users.Max(u => u.Id) + 1;
+
+            var user = new User
+            {
+                Id = nextId,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber,
+                City = request.City,
+                Country = request.Country,
+                Department = request.Department,
+                JobTitle = request.JobTitle,
+                Age = request.Age,
+                Birthdate = request.Birthdate,
+                IsActive = true
+            };
+
+            users.Add(user);
+            try
+            {
+                await SaveUsersToFileAsync(users);
+            }
+            catch
+            {
+                users.Remove(user);
+                throw;
+            }
+
+            return user;
+        }
+        finally
+        {
+            _createUserLock.Release();
+        }
     }
 
     /// <summary>
@@ -145,6 +193,25 @@ public class UserService
         }
     }
 
+    private async Task SaveUsersToFileAsync(List<User> users)
+    {
+        try
+        {
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+
+            var jsonContent = JsonSerializer.Serialize(users, options);
+            await File.WriteAllTextAsync(_jsonFilePath, jsonContent);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving users to file");
+            throw;
+        }
+    }
+
     /// <summary>
     /// Reloads users from the file (clears cache)
     /// </summary>
@@ -152,6 +219,11 @@ public class UserService
     {
         _users = null;
         await GetAllUsersAsync();
+    }
+
+    public void Dispose()
+    {
+        _createUserLock.Dispose();
     }
 }
 
